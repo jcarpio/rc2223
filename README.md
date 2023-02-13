@@ -1,2 +1,2 @@
-# RC2022_2023
+# rc2223
 Representación del Conocimiento 2022-2023
