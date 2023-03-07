@@ -1,3 +1,7 @@
+
+
+:- use_module(library(clpfd)).
+
 sudoku(Filas):- length(Filas, 9),
                 maplist(same_length(Filas, Filas)),
 				append(Filas, Vars), Vars ins 1..9,
