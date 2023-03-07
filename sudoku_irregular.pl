@@ -1,7 +1,3 @@
-
-
-:- use_module(library(clpfd)).
-
 sudoku(Filas):- length(Filas, 9),
                 maplist(same_length(Filas, Filas)),
 				append(Filas, Vars), Vars ins 1..9,
@@ -18,4 +14,24 @@ sudoku(Filas):- length(Filas, 9),
 					   [E81,E82,E83,E84,E85,E86,E87,E88,E89],
 					   [E91,E92,E93,E94,E95,E96,E97,E98,E99]],
 				% Bloque 1
-                all_distinct([E11,E12,E21,E22,E23,E31,E32,E42,E52]).
+                all_distinct([E11,E12,E13,E14,E15,E16,E23,E24,E25]),
+				all_distinct([E11,E12,E13,E14,E15,E16,E23,E24,E25]).
+				
+/*
+
+
+*/		
+		
+sudoku1([
+        [_,_,_,_,3,_,_,_,_],
+		[_,_,_,_,_,9,_,_,_],
+		[_,5,6,9,_,_,2,1,_],
+		[8,_,3,_,_,_,_,7,_],
+		[7,_,_,3,4,5,_,_,9],
+		[_,4,_,_,_,_,8,_,3],
+		[_,7,5,_,_,6,9,4,_],
+		[_,_,_,1,_,_,_,_,_],
+		[_,_,_,_,5,_,_,_,_],
+]).				
+
+% sudoku1(S), sudoku(S), maplist(label, S).
