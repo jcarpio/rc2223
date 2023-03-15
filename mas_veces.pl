@@ -6,10 +6,7 @@
    repite dicho elemento.
 ------------------------------------------------------*/
 
-
-
-
-
+mas_veces(Lista, E, N):- msort(Lista, R), comprime(R, R2), n_mayor(R2, E, N).
 
 
 /* ----------------------------------------------------
@@ -33,5 +30,30 @@ comprime(+Lista, -R)
 
 comprime([], []).
 
+comprime([E], [(E,1)]).
+
 comprime([Cab, Cab|Resto], [(Cab, N2)|R]):-  
         comprime([Cab|Resto], [(Cab, N)|R]), N2 is N+1.
+		
+comprime([Cab1, Cab2|Resto], [(Cab1, 1)|R]):- Cab1 \= Cab2, 
+        comprime([Cab2|Resto], R).
+		
+/*------------------------------------------------------
+
+n_mayor(+Lista, -E, -N)
+ es cierto si E unifica con el elemento con N mayor
+ de la lista de tuplas Lista. 
+ 
+ n_mayor([(a,3), (b,2), (c,1), (a,1), (d,3)], E, N).
+ E = a
+ N = 3
+ 
+-------------------------------------------------------*/		
+  
+n_mayor([(E,N)], E, N).
+
+n_mayor([(_,N)|R], E2, N2):- 
+  n_mayor(R, E2, N2), N2 > N.
+
+n_mayor([(E,N)|R], E, N):- 
+  n_mayor(R, _, N2), N2 =< N.
