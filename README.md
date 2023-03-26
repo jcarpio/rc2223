@@ -7,3 +7,6 @@ http://eu.swi-prolog.org/man/clpfd.html
 ## Canal YouTube de Programación Declarativa
 https://www.youtube.com/josecarpioc
 
+## Scryer Prolog
+https://www.scryer.pl/
+
