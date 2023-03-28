@@ -52,7 +52,7 @@ sameroom_var(Reqs, r(Class,Subject,Lesson), Var) :-
         memberchk(req(Class,Subject,_Teacher,_Num)-Slots, Reqs),
         nth0(Lesson, Slots, Var).
 		
-strictly_ascending(Ls) :- chain(#<, Ls).
+strictly_ascending(Ls) :- chain(Ls, #<).
 
 constrain_room(Reqs, Room) :-
         findall(r(Class,Subj,Less), room_alloc(Room,Class,Subj,Less), RReqs),
@@ -73,8 +73,30 @@ without_([W|Ws], Pos0, [E|Es]) -->
 without_at_pos0(=, _, [_|Ws], Ws) --> [].
 without_at_pos0(>, E, Ws0, Ws0) --> [E].
 
-list_without_nths(Es0, Ws, Es) :-
-        phrase(without_(Ws, 0, Es0), Es).
+% list_without_nths(Es0, Ws, Es) :-
+%        phrase(without_(Ws, 0, Es0), Es).
+
+ list_without_nths(Lista, [], Lista).
+ 
+ list_without_nths(Lista, [Cab|Resto], R2):-
+   list_without_nths(Lista, Resto, R), elimina_pos(R, Cab, R2).
+   
+/*   
+ elimina_pos(+Lista, +Pos, -R)
+   es cierto si R unifica con una lista que contiene los elementos
+   de Lista exceptuando el que ocupa la posición Pos. Los
+   valores de posiciones empiezan en 0.
+*/
+
+ elimina_pos([], _, []).
+ 
+ elimina_pos([_|Resto], 0, Resto).
+ 
+ elimina_pos([Cab|Resto], Pos, [Cab|R]):- Pos > 0, Pos2 #= Pos - 1,
+   elimina_pos(Resto, Pos2, R).
+		
+%:- list_without_nths("abcd", [3], "abc").
+%:- list_without_nths("abcd", [1,2], "ad").		
 		
 		
 requirements_variables(Rs, Vars) :-
@@ -85,11 +107,11 @@ requirements_variables(Rs, Vars) :-
         Vars ins 0..Max,
         maplist(constrain_subject, Rs),
         classes(Classes),
-        teachers(Teachers),
-        rooms(Rooms),
-        maplist(constrain_teacher(Rs), Teachers),
-        maplist(constrain_class(Rs), Classes),
-        maplist(constrain_room(Rs), Rooms).
+        teachers(Teachers).
+     %   rooms(Rooms),
+     %   maplist(constrain_teacher(Rs), Teachers),
+     %   maplist(constrain_class(Rs), Classes),
+     %   maplist(constrain_room(Rs), Rooms).
 
 constrain_class(Rs, Class) :-
         tfilter(class_req(Class), Rs, Sub),
@@ -109,6 +131,11 @@ constrain_subject(req(Class,Subj,_Teacher,_Num)-Slots) :-
         sort(Seconds0, Seconds),
         list_without_nths(Qs0, Seconds, Qs),
         strictly_ascending(Qs).	
+		
+slots_couplings(Slots, F-S) :-
+        nth0(F, Slots, S1),
+        nth0(S, Slots, S2),
+        S2 #= S1 + 1.		
 
 constrain_teacher(Rs, Teacher) :-
         tfilter(teacher_req(Teacher), Rs, Sub),
@@ -117,4 +144,3 @@ constrain_teacher(Rs, Teacher) :-
         findall(F, teacher_freeday(Teacher, F), Fs),
         maplist(slot_quotient, Vs, Qs),
         maplist(all_diff_from(Qs), Fs).
-		
