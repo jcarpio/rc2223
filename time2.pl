@@ -2,6 +2,7 @@
 
 :- use_module(library(clpfd)).
 :- use_module(library(persistency)).
+:- use_module(library(reif)).
 
 /*
 :- dynamic(class_subject_teacher_times/4).
