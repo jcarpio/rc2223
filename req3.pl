@@ -14,9 +14,6 @@ class_subject_teacher_times('1a', bio, bio1, 2).
 class_subject_teacher_times('1a', ph, fiz1, 2).
 class_subject_teacher_times('1a', f, rai1, 2).
 class_subject_teacher_times('1a', lat, atvz1, 3).
-coupling('1a', deu, 2, 3).
-class_freeslot('1a', 0).
-class_freeslot('1a', 1).
 
 class_subject_teacher_times('1b', deu, sjk1, 4).
 class_subject_teacher_times('1b', mat, mat2, 5).
@@ -184,7 +181,12 @@ class_subject_teacher_times('4d', nej, nej1, 2).
 class_subject_teacher_times('4d', h, zgo1, 2).
 class_subject_teacher_times('4d', fil, fil1, 2).
 class_subject_teacher_times('4d', lat, atvz1, 3).
+
 class_freeslot('4d', 6).
+class_freeslot('1a', 0).
+class_freeslot('1a', 1).
+
+coupling('1a', deu, 2, 3).
 
 room_alloc(r1, '1a', deu, 0).
 room_alloc(r1, '1a', deu, 1).
