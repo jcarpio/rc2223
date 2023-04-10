@@ -1,4 +1,31 @@
-:- load_files('req2.pl').
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   Simsttab -- Simplistic school time tabler
+   Copyright (C) 2005-2022 Markus Triska triska@metalevel.at
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+   For more information about this program, visit:
+
+          https://www.metalevel.at/simsttab/
+          ==================================
+
+   Tested with Scryer Prolog.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+:- load_files('req3.pl').
 
 :- use_module(library(clpfd)).
 :- use_module(library(persistency)).
@@ -26,6 +53,35 @@
 
 :- discontiguous class_subject_teacher_times/4.
 :- discontiguous class_freeslot/2.
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			 Posting constraints
+
+   The most important data structure in this CSP are pairs of the form
+
+      Req-Vs
+
+   where Req is a term of the form req(C,S,T,N) (see below), and Vs is
+   a list of length N. The elements of Vs are finite domain variables
+   that denote the *time slots* of the scheduled lessons of Req. We
+   call this list of Req-Vs pairs the requirements.
+
+   To break symmetry, the elements of Vs are constrained to be
+   strictly ascending (it follows that they are all_different/1).
+
+   Further, the time slots of each teacher are constrained to be
+   all_different/1.
+
+   For each requirement, the time slots divided by slots_per_day are
+   constrained to be strictly ascending to enforce distinct days,
+   except for coupled lessons.
+
+   The time slots of each class, and of lessons occupying the same
+   room, are constrained to be all_different/1.
+
+   Labeling is performed on all slot variables.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 
 classes(Classes) :-
        setof(C, S^N^T^class_subject_teacher_times(C,S,T,N), Classes).
