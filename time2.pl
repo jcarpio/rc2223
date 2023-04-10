@@ -64,6 +64,7 @@ slot_quotient(S, Q) :-
         slots_per_day(SPD),
         Q #= S // SPD.
 
+/*		
 without_([], _, Es) --> seq(Es).
 without_([W|Ws], Pos0, [E|Es]) -->
         { Pos #= Pos0 + 1,
@@ -73,6 +74,7 @@ without_([W|Ws], Pos0, [E|Es]) -->
 
 without_at_pos0(=, _, [_|Ws], Ws) --> [].
 without_at_pos0(>, E, Ws0, Ws0) --> [E].
+*/
 
 % list_without_nths(Es0, Ws, Es) :-
 %        phrase(without_(Ws, 0, Es0), Es).
@@ -108,11 +110,11 @@ requirements_variables(Rs, Vars) :-
         Vars ins 0..Max,
         maplist(constrain_subject, Rs),
         classes(Classes),
-        teachers(Teachers).
-     %   rooms(Rooms),
-     %   maplist(constrain_teacher(Rs), Teachers),
-     %   maplist(constrain_class(Rs), Classes),
-     %   maplist(constrain_room(Rs), Rooms).
+        teachers(Teachers),
+        rooms(Rooms),
+        maplist(constrain_teacher(Rs), Teachers),
+        maplist(constrain_class(Rs), Classes),
+        maplist(constrain_room(Rs), Rooms).
 
 constrain_class(Rs, Class) :-
         tfilter(class_req(Class), Rs, Sub),
@@ -145,3 +147,6 @@ constrain_teacher(Rs, Teacher) :-
         findall(F, teacher_freeday(Teacher, F), Fs),
         maplist(slot_quotient, Vs, Qs),
         maplist(all_diff_from(Qs), Fs).
+
+teacher_req(T0, req(_C,_S,T1,_N)-_, T) :- =(T0,T1,T).
+class_req(C0, req(C1,_S,_T,_N)-_, T) :- =(C0, C1, T).		
