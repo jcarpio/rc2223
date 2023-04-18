@@ -409,6 +409,8 @@ align(verbatim(E)):- format("~t~w~t~8+", [E]).
 with_verbatim(T, verbatim(T)).
 
 % format("~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+", [lun,mar,mier,jue]).
+
+% F="~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+" , format(F, [lun,mar,mie,jue,vie]).
 		
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ?- requirements_variables(Rs, Vs), labeling([ff], Vs), print_classes(Rs).
