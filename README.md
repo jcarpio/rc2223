@@ -10,3 +10,6 @@ https://www.youtube.com/josecarpioc
 ## Scryer Prolog
 https://www.scryer.pl/
 
+### Formatting Output with Prolog
+https://www.youtube.com/watch?v=SwoZabsIzRg
+
