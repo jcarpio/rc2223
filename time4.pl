@@ -240,6 +240,147 @@ v_teacher(Rs, V, N0, N) :-
 
 print_classes(Rs) :-
         classes(Cs),
+        format_classes(Cs, Rs).
+
+format_classes([], _).
+format_classes([Class|Classes], Rs):-
+  class_days(Rs, Class, Days0),
+  transpose(Days0, Days),
+  format("Class: ~w~2n", [Class]),
+  weekdays_header,
+  align_rows(Days),
+  format_classes(Classes, Rs).
+  
+
+align_rows([]).
+align_rows([Head|Tail]):- 
+  align(Head),
+  align_rows(Tail).
+  
+   
+weekdays_header():-     
+        Vs = ['Mon','Tue','Wed','Thu','Fri'],
+        align(Vs),
+        format("~n~`=t~40|~n", []).  
+
+
+align(free):- format("~t~w~t~8+", ['']).
+align(class_subject(C,S)):- format("~t~w~t~8+", [C/S]).		
+align(subject(S)):- format("~t~w~t~8+", [S]).
+align([E1,E2,E3,E4,E5]):- format("~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+", [E1,E2,E3,E4,E5]).
+
+with_verbatim(T, verbatim(T)).
+		
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ?- requirements_variables(Rs, Vs), labeling([ff], Vs), print_classes(Rs).
+   %@ Class: 1a
+   %@
+   %@   Mon     Tue     Wed     Thu     Fri
+   %@ ========================================
+   %@   mat     mat     mat     mat     mat
+   %@   eng     eng     eng
+   %@    h       h
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */			
+		
+		
+requirements_variables(Rs, Vars) :-
+        requirements(Rs),
+        pairs_slots(Rs, Vars),
+        slots_per_week(SPW),
+        Max #= SPW - 1,
+        Vars ins 0..Max,
+        maplist(constrain_subject, Rs),
+        classes(Classes),
+        teachers(Teachers),
+        rooms(Rooms),
+        maplist(constrain_teacher(Rs), Teachers),
+        maplist(constrain_class(Rs), Classes),
+        maplist(constrain_room(Rs), Rooms).
+
+constrain_class(Rs, Class) :-
+        tfilter(class_req(Class), Rs, Sub),
+        pairs_slots(Sub, Vs),
+        all_different(Vs),
+        findall(S, class_freeslot(Class,S), Frees),
+        maplist(all_diff_from(Vs), Frees).
+
+all_diff_from(Vs, F) :- maplist(#\=(F), Vs).
+
+constrain_subject(req(Class,Subj,_Teacher,_Num)-Slots) :-
+        strictly_ascending(Slots), % break symmetry
+        maplist(slot_quotient, Slots, Qs0),
+        findall(F-S, coupling(Class,Subj,F,S), Cs),
+        maplist(slots_couplings(Slots), Cs),
+        pairs_values(Cs, Seconds0),
+        sort(Seconds0, Seconds),
+        list_without_nths(Qs0, Seconds, Qs),
+        strictly_ascending(Qs).	
+		
+slots_couplings(Slots, F-S) :-
+        nth0(F, Slots, S1),
+        nth0(S, Slots, S2),
+        S2 #= S1 + 1.		
+
+constrain_teacher(Rs, Teacher) :-
+        tfilter(teacher_req(Teacher), Rs, Sub),
+        pairs_slots(Sub, Vs),
+        all_different(Vs),
+        findall(F, teacher_freeday(Teacher, F), Fs),
+        maplist(slot_quotient, Vs, Qs),
+        maplist(all_diff_from(Qs), Fs).
+
+teacher_req(T0, req(_C,_S,T1,_N)-_, T) :- =(T0,T1,T).
+class_req(C0, req(C1,_S,_T,_N)-_, T) :- =(C0, C1, T).
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   Relate teachers and classes to list of days.
+   Each day is a list of subjects (for classes), and a list of
+   class/subject terms (for teachers). The predicate days_variables/2
+   yields a list of days with the right dimensions, where each element
+   is a free variable.
+   We use the atom 'free' to denote a free slot, and the compound terms
+   class_subject(C, S) and subject(S) to denote classes/subjects.
+   This clean symbolic distinction is used to support subjects
+   that are called 'free', and to improve generality and efficiency.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+days_variables(Days, Vs) :-
+        slots_per_week(SPW),
+        slots_per_day(SPD),
+        NumDays #= SPW // SPD,
+        length(Days, NumDays),
+        length(Day, SPD),
+        maplist(same_length(Day), Days),
+        append(Days, Vs).
+		
+class_days(Rs, Class, Days) :-
+        days_variables(Days, Vs),
+        tfilter(class_req(Class), Rs, Sub),
+        foldl(v(Sub), Vs, 0, _).
+
+v(Rs, V, N0, N) :-
+        (   member(req(_,Subject,_,_)-Times, Rs),
+            member(N0, Times) -> V = subject(Subject)
+        ;   V = free
+        ),
+        N #= N0 + 1.
+
+teacher_days(Rs, Teacher, Days) :-
+        days_variables(Days, Vs),
+        tfilter(teacher_req(Teacher), Rs, Sub),
+        foldl(v_teacher(Sub), Vs, 0, _).
+
+v_teacher(Rs, V, N0, N) :-
+        (   member(req(C,Subj,_,_)-Times, Rs),
+            member(N0, Times) -> V = class_subject(C, Subj)
+        ;   V = free
+        ),
+        N #= N0 + 1.
+		
+% requirements_variables(Rs, Vs), labeling([ff], Vs), class_days(Rs, '1a', Days), transpose(Days, DaysT).
+
+print_classes(Rs) :-
+        classes(Cs),
         format_classes(Cs).
 
 format_classes([]).
