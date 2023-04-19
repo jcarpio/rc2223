@@ -284,6 +284,19 @@ align(subject(S)):- format("~t~w~t~8+", [S]).
 align([E1,E2,E3,E4,E5]):- format("~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+", [E1,E2,E3,E4,E5]).
 
 with_verbatim(T, verbatim(T)).
+
+format_teachers([], _).
+format_teachers([T|Ts], Rs):-
+        teacher_days(Rs, T, Days0),
+        transpose(Days0, Days),
+        format("Teacher: ~w~2n", [T]),
+        weekdays_header,
+        align_rows(Days),
+        format_teachers(Ts, Rs).
+		
+print_teachers(Rs) :-
+        teachers(Ts),
+        format_teachers(Ts, Rs).		
 		
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    ?- requirements_variables(Rs, Vs), labeling([ff], Vs), print_classes(Rs).
