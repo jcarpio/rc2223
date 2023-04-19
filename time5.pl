@@ -251,17 +251,34 @@ format_classes([Class|Classes], Rs):-
   align_rows(Days),
   format_classes(Classes, Rs).
   
+% [subject(mat), free, class_subject('1a', mat), free]
+% [mat, '', '1a/mat', '']
+ 
+align_rows([]):- format("\n\n\n",[]).
+align_rows([R|Rs]):-
+        align_row(R),
+        format("\n",[]),
+        align_rows(Rs).
 
-align_rows([]).
-align_rows([Head|Tail]):- 
-  align(Head),
-  align_rows(Tail).
+align_row([]).
+align_row([R|Rs]):-
+        % align_(R),
+		translate_row(R, R2),
+		format("~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+", R2),
+        align_row(Rs).
   
    
-weekdays_header():-     
-        Vs = ['Mon','Tue','Wed','Thu','Fri'],
-        align(Vs),
-        format("~n~`=t~40|~n", []).  
+weekdays_header():-      		
+		format("~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+", ['Mon', 'Tue','Wed','Thu','Fri']),
+        format("~n~`=t~40|~n", []). 
+
+translate_row([], []).
+translate_row([subject(S)|Tail], [S|R]):-   
+   translate_row(Tail, R).
+translate_row([class_subject(C,S)|Tail], [C/S|R]):-   
+   translate_row(Tail, R).
+translate_row([free|Tail], [''|R]):-   
+   translate_row(Tail, R).
 
 
 align(free):- format("~t~w~t~8+", ['']).
