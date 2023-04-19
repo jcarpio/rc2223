@@ -260,14 +260,11 @@ align_rows([R|Rs]):-
         format("\n",[]),
         align_rows(Rs).
 
-align_row([]).
-align_row([R|Rs]):-
-        % align_(R),
-		translate_row(R, R2),
-		format("~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+", R2),
-        align_row(Rs).
+
+align_row(Row):-
+		translate_row(Row, R2),
+		format("~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+", R2).
   
-   
 weekdays_header():-      		
 		format("~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+~t~w~t~8+", ['Mon', 'Tue','Wed','Thu','Fri']),
         format("~n~`=t~40|~n", []). 
