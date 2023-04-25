@@ -1,3 +1,5 @@
+#!/usr/bin/env swipl
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    Simsttab -- Simplistic school time tabler
    Copyright (C) 2005-2022 Markus Triska triska@metalevel.at
@@ -49,6 +51,9 @@
 :- discontiguous class_subject_teacher_times/4.
 :- discontiguous class_freeslot/2.
 
+:- initialization main.
+
+
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 			 Posting constraints
    The most important data structure in this CSP are pairs of the form
@@ -69,6 +74,19 @@
    Labeling is performed on all slot variables.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+
+:- http_handler(/, say_hi, []).
+
+say_hi(_Request) :-
+        format('Content-type: text/html~n~n'),
+		format('<!DOCTYPE html>'),
+		format('<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">\n<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>\n<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>'),
+		format('<head></head><body>~n'),
+		format('<h1>AI Timetable</h1><h2><a href="aitt">Example</a></h2></body></html>~n').
+
+main :-
+  http_server(http_dispatch, [port(3040)]),
+  thread_get_message(quit).
 
 classes(Classes) :-
        setof(C, S^N^T^class_subject_teacher_times(C,S,T,N), Classes).
