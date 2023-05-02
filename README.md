@@ -1,6 +1,9 @@
 # rc2223
 Representación del Conocimiento 2022-2023
 
+## enkire.com (Demo del proyecto)
+http://enkire.com
+
 ## Swi Prolog: library(clpfd) 
 http://eu.swi-prolog.org/man/clpfd.html
 
