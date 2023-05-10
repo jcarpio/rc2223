@@ -334,6 +334,8 @@ aitt(_Request) :-					% (3)
 		format('<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">\n<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>\n<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>'),
 		format('<head></head><body>~n'),
 		format('<h1>AI Timetable</h1>~n'),
+		% call_with_time_limit(1, requirements_variables(Rs, Vs)),
+                % call_with_time_limit(3,labeling([ff], Vs)),
 		requirements_variables(Rs, Vs), 
 		labeling([ff], Vs), 
 		print_classes(Rs),
