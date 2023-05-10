@@ -22,6 +22,7 @@
 
 :- load_files('req_inf.pl').
 
+:- use_module(library(time)).
 :- use_module(library(clpfd)).
 :- use_module(library(persistency)).
 :- use_module(library(reif)).
